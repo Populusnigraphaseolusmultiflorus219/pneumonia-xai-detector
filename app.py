@@ -1,3 +1,4 @@
+import os
 import io
 import numpy as np
 from PIL import Image
@@ -17,7 +18,14 @@ IMG_SIZE = 224
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 CLASS_NAMES = ["NORMAL", "PNEUMONIA"]
-MODEL_PATH = "best.pt"   
+MODEL_PATH = "best.pt"
+HF_MODEL_URL = "https://huggingface.co/eseeyuh/pneumonia-xai-detector/resolve/main/best.pt"
+
+# Auto-download model if not present
+if not os.path.exists(MODEL_PATH):
+    import urllib.request
+    with st.spinner("Downloading model weights..."):
+        urllib.request.urlretrieve(HF_MODEL_URL, MODEL_PATH)  
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
