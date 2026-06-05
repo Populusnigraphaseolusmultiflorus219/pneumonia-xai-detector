@@ -1,6 +1,6 @@
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF4B4B)](https://pneumonia-xai-detector-7wm8j5lwmpnfbs4sedyhdo.streamlit.app)
 
-<img src="demo.png" width="800"/>
+![Demo](demo.png)
 
 # XAI Pneumonia Detector
 
