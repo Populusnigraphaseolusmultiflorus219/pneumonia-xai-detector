@@ -1,3 +1,5 @@
+[![Live Demo](https://img.shields.io/badge/Live-Demo-FF4B4B)](https://pneumonia-xai-detector-7wm8j5lwmpnfbs4sedyhdo.streamlit.app)
+
 # XAI Pneumonia Detector
 
 A Streamlit web app that wraps a trained DenseNet-121 model for pneumonia detection in chest X-rays. Upload a scan and get three things back: a classification, a Grad-CAM heatmap showing where the model looked, and an MC-Dropout uncertainty estimate.
