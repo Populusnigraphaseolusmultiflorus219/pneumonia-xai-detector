@@ -1,0 +1,8 @@
+best.pt
+*.pt
+*.pth
+*.h5
+__pycache__/
+*.pyc
+.env
+venv/
