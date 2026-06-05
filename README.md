@@ -4,8 +4,6 @@
 
 A Streamlit web app that wraps a trained DenseNet-121 model for pneumonia detection in chest X-rays. Upload a scan and get three things back: a classification, a Grad-CAM heatmap showing where the model looked, and an MC-Dropout uncertainty estimate.
 
-> **Note:** The app only runs inference — it does not train the model. You need `best.pt` from the training notebook before you can use it.
-
 ---
 
 ## What it does
