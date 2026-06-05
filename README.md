@@ -1,140 +1,125 @@
-# XAI Pneumonia Detector — Streamlit-приложение
+# XAI Pneumonia Detector
 
-Это веб-обёртка для модели из вашего ноутбука `Explainable_AI.ipynb`.
-Модель — **DenseNet-121**, обученная отличать норму от пневмонии на рентгене
-грудной клетки. Приложение для загруженного снимка показывает:
+A Streamlit web app that wraps a trained DenseNet-121 model for pneumonia detection in chest X-rays. Upload a scan and get three things back: a classification, a Grad-CAM heatmap showing where the model looked, and an MC-Dropout uncertainty estimate.
 
-1. **Предсказание** — NORMAL / PNEUMONIA + вероятности;
-2. **Grad-CAM** — тепловую карту: куда «смотрела» модель;
-3. **MC-Dropout** — оценку неуверенности (энтропия + разброс по T прогонам).
-
-> ⚠️ Обучение остаётся в ноутбуке. Приложение НЕ обучает модель — оно
-> только загружает готовые веса `best.pt`. Поэтому шаг 1 обязателен.
+> **Note:** The app only runs inference — it does not train the model. You need `best.pt` from the training notebook before you can use it.
 
 ---
 
-## Что вам понадобится
+## What it does
 
-- Python **3.9–3.11**
-- Файл весов `best.pt` (получаем из ноутбука, шаг 1)
-- Три моих файла: `app.py`, `requirements.txt`, `README.md`
+- Classifies a chest X-ray as **NORMAL** or **PNEUMONIA**
+- Shows class probabilities from a standard forward pass
+- Overlays a **Grad-CAM** heatmap on the input image
+- Runs **T stochastic forward passes** (MC-Dropout) to estimate prediction uncertainty via entropy and variance
 
 ---
 
-## Шаг 1. Получить веса `best.pt` из ноутбука
+## Results
 
-Ноутбук сохраняет лучшую модель в `/content/results/models/best.pt`
-(это делает ячейка обучения **Cell 5.1**). Нужно прогнать ноутбук минимум
-до этой ячейки, а затем скачать файл.
+| Metric | This model | Kermany et al. baseline |
+|--------|-----------|------------------------|
+| AUC-ROC | **0.9975** | 0.968 |
+| Accuracy | **0.9676** | 0.928 |
+| F1 | **0.9774** | 0.916 |
+| Precision | **0.9976** | 0.901 |
 
-В конце ноутбука (в Google Colab) добавьте и выполните одну ячейку:
+Deferring the 30% most uncertain cases (by predictive entropy) raises retained accuracy to **0.998**. At 40% deferral the retained set hits 100%.
+
+---
+
+## Research paper
+
+**Explainable Pneumonia Triage from Chest X-Rays**  
+Daryn Shaidarov — University of Portsmouth, 2025  
+Supervised by Dr Alexander Gegov, Reader in Explainable AI
+
+*arXiv preprint — link coming soon*
+
+---
+
+## Setup
+
+### 1. Get the model weights
+
+The training notebook saves the best checkpoint to `/content/results/models/best.pt`. Run the notebook through the training cell, then download the file. In Colab:
 
 ```python
 from google.colab import files
 files.download('/content/results/models/best.pt')
 ```
 
-Браузер скачает `best.pt` (примерно 28 МБ). Если запускаете не в Colab —
-просто скопируйте файл `/content/results/models/best.pt` себе на компьютер.
+The file is around 28 MB.
 
----
-
-## Шаг 2. Сложить все файлы в одну папку
-
-Создайте папку, например `xai_app`, и положите туда:
+### 2. Put everything in one folder
 
 ```
-xai_app/
+project/
 ├── app.py
 ├── requirements.txt
 ├── README.md
-└── best.pt          ← из шага 1
+└── best.pt
 ```
 
-`best.pt` должен лежать рядом с `app.py` (имя файла менять не нужно).
+`best.pt` needs to sit next to `app.py` — the path is hardcoded.
 
----
+### 3. Install dependencies
 
-## Шаг 3. Установить зависимости
-
-Откройте терминал в папке `xai_app`.
-
-**macOS / Linux:**
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-**Windows (PowerShell):**
-```powershell
 python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Установка тяжёлая (тянет PyTorch), первый раз займёт несколько минут.
+First install takes a few minutes because of PyTorch.
 
----
-
-## Шаг 4. Запустить приложение
+### 4. Run
 
 ```bash
 streamlit run app.py
 ```
 
-Браузер откроется сам на `http://localhost:8501`.
-Если нет — откройте этот адрес вручную.
+Opens at `http://localhost:8501`.
 
 ---
 
-## Шаг 5. Пользоваться
+## Usage
 
-1. Нажмите **Browse files** и загрузите рентген (`.jpg` / `.png`).
-   Для проверки удобно взять снимок из тестовой выборки датасета
-   (`chest_xray/test/NORMAL` или `.../PNEUMONIA`).
-2. Через пару секунд появятся: вердикт, вероятности, Grad-CAM и блок
-   неуверенности с гистограммой.
-3. В боковой панели можно менять число прогонов MC-Dropout (**T**) и
-   включать/выключать Grad-CAM.
+Upload a `.jpg` or `.png` chest X-ray using the file uploader. Results appear in a few seconds.
 
-### Как читать результат
-- **Вероятности** — обычный (детерминированный) прогон модели.
-- **Grad-CAM** — тёплые (красные) зоны сильнее всего повлияли на решение.
-  Для пневмонии они в норме должны попадать на лёгочные поля, а не на
-  подписи/края снимка.
-- **Энтропия**: 0 — модель уверена, 0.693 — максимум неуверенности для
-  двух классов. Широкий разброс на гистограмме = модель сомневается.
+**Reading the output:**
+- **Probabilities** — single deterministic forward pass
+- **Grad-CAM** — warm (red) regions had the most influence on the prediction. For true pneumonia cases these should land on the lung fields, not on image borders or scanner annotations
+- **Entropy** — 0 means the model is certain, 0.693 is maximum uncertainty for a binary classifier. A wide histogram spread means the model is unsure and the case probably warrants a second look
+
+You can adjust the number of MC-Dropout passes (T) and toggle Grad-CAM on/off in the sidebar.
 
 ---
 
-## Если что-то пошло не так
+## Troubleshooting
 
-- **`Model weights best.pt not found`** — файла `best.pt` нет в папке с
-  `app.py`. Вернитесь к шагу 1–2.
-- **Ошибка при `load_state_dict` (несовпадение ключей)** — `best.pt` был
-  сохранён от другой архитектуры. Убедитесь, что веса именно из этого
-  ноутбука (DenseNet-121 + голова `Dropout(0.3) → Linear(…, 2)`).
-- **Ошибка с `cv2` / `grad-cam`** — переустановите:
-  `pip install --upgrade grad-cam opencv-python-headless`.
-  Либо снимите галочку «Compute Grad-CAM» в боковой панели — предсказание
-  и неуверенность работают и без неё.
-- **Нет GPU** — это нормально, приложение работает и на CPU
-  (в боковой панели будет `Device: CPU`), просто чуть медленнее.
-- **Долгий первый запуск** — модель кешируется, повторные предсказания
-  быстрые.
+**`Model weights best.pt not found`** — `best.pt` is not in the same folder as `app.py`. Go back to step 1.
+
+**`load_state_dict` key mismatch** — the weights are from a different architecture. Make sure `best.pt` comes from this notebook specifically (DenseNet-121 with `Dropout(0.3) → Linear(..., 2)` head).
+
+**Grad-CAM import error** — run `pip install --upgrade grad-cam opencv-python-headless`, or just uncheck "Compute Grad-CAM" in the sidebar. Predictions and uncertainty still work without it.
+
+**No GPU** — fine, the app runs on CPU. It'll be a bit slower but works the same. The sidebar shows the active device.
 
 ---
 
-## Технические детали (для сверки с ноутбуком)
+## Model details
 
-| Параметр                | Значение                                  |
-|-------------------------|-------------------------------------------|
-| Архитектура             | DenseNet-121, голова `Dropout(0.3)+Linear→2` |
-| Вход                    | 224×224 RGB, нормализация ImageNet         |
-| Целевой слой Grad-CAM   | `model.features[-1]`                       |
-| MC-Dropout              | T прогонов, активен только `Dropout`       |
-| Метрики неуверенности   | предсказательная энтропия, дисперсия P(пневмония) |
+| Parameter | Value |
+|-----------|-------|
+| Architecture | DenseNet-121, head: `Dropout(0.3) + Linear → 2` |
+| Input | 224×224 RGB, ImageNet normalisation |
+| Grad-CAM target layer | `model.features[-1]` |
+| MC-Dropout | T passes, only Dropout layers active |
+| Uncertainty metrics | Predictive entropy, variance of P(pneumonia) |
 
-Эти значения совпадают с ячейками ноутбука (Cell 3.1, 4.1, 7.1, 8.1),
-поэтому веса `best.pt` загружаются без изменений.
+---
+
+## Tech stack
+
+Python · PyTorch · Streamlit · pytorch-grad-cam · NumPy · Pillow · Matplotlib
