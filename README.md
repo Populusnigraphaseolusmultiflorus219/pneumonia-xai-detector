@@ -40,16 +40,15 @@ Supervised by Dr Alexander Gegov, Reader in Explainable AI
 
 ## Setup
 
-### 1. Get the model weights
+### 1. Download the model weights
 
-The training notebook saves the best checkpoint to `/content/results/models/best.pt`. Run the notebook through the training cell, then download the file. In Colab:
-
-```python
-from google.colab import files
-files.download('/content/results/models/best.pt')
+```bash
+wget https://huggingface.co/eseeyuh/pneumonia-xai-detector/resolve/main/best.pt
 ```
 
-The file is around 28 MB.
+Or download manually from
+[Hugging Face](https://huggingface.co/eseeyuh/pneumonia-xai-detector)
+and place `best.pt` in the root directory.
 
 ### 2. Put everything in one folder
 
